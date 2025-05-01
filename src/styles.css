@@ -1,0 +1,35 @@
+@import "tailwindcss";
+
+
+/* Tus clases personalizadas */
+/* src/index.css o src/App.css */
+.home {
+    display: flex;
+    flex-direction: row;
+    padding: 20px;
+  }
+  
+  .main-content {
+    flex: 3;
+  }
+  
+  .sidebars {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  /* Estilo para scroll interno */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
