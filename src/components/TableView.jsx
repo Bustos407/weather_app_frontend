@@ -38,17 +38,20 @@ function TableView() {
   if (error) return <div className="p-4 text-red-500">{error}</div>;
 
   return (
-    <div className="p-4 sm:p-6 h-auto sm:h-screen flex flex-col w-full">
-      <Link 
-        to="/home" 
-        className="mb-4 text-sm sm:text-base inline-block text-blue-500 hover:underline"
-      >
-        &larr; Volver al clima actual
-      </Link>
-      <h2 className="text-2xl font-bold mb-4">
-        {type === 'history' ? 'Historial Completo' : 'Favoritos'}
-      </h2>
-      <div className="flex-1">
+    <div className="min-h-screen w-full flex flex-col p-4 sm:p-6 bg-gray-100">
+      <div className="mb-4 space-y-2">
+        <Link 
+          to="/home" 
+          className="text-blue-500 hover:underline inline-block text-sm sm:text-base"
+        >
+          &larr; Volver al clima actual
+        </Link>
+        <h2 className="text-2xl sm:text-3xl font-bold text-gray-800">
+          {type === 'history' ? 'Historial Completo' : 'Tus Favoritos'}
+        </h2>
+      </div>
+      
+      <div className="flex-1 bg-white rounded-xl shadow-lg overflow-hidden">
         <WeatherTable cities={cities} />
       </div>
     </div>

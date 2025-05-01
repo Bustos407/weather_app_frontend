@@ -61,9 +61,9 @@ function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 p-4 sm:p-6">
-      {/* Contenido principal */}
-      <div className="mr-0 lg:mr-80">
+    <div className="min-h-screen bg-gray-100 flex flex-col lg:flex-row">
+      {/* Contenido principal con padding superior */}
+      <div className="flex-1 min-w-0 pt-24"> {/* Added pt-24 */}
         <Weather 
           {...weather}
           favorites={favorites}
@@ -72,9 +72,9 @@ function Home() {
         />
       </div>
 
-      {/* Panel lateral desktop */}
-      <div className="hidden lg:block fixed top-24 right-4 w-72 z-20 flex flex-col gap-4">
-        <div className="bg-white rounded-xl shadow-lg p-4 h-[42vh] flex flex-col">
+      {/* Panel lateral desktop con margen superior y ajuste de altura */}
+      <div className="hidden lg:flex flex-col gap-4 w-80 mt-24 flex-shrink-0 pr-4"> {/* Added mt-24 and pr-4 */}
+        <div className="bg-white rounded-xl shadow-lg p-4 h-[calc(100vh-35rem)] flex flex-col">
           <h3 className="text-lg font-semibold mb-2">Historial</h3>
           <div className="flex-1 overflow-y-auto">
             <History history={history} onHistoryClick={handleCityAction} />
@@ -87,7 +87,7 @@ function Home() {
           </Link>
         </div>
 
-        <div className="bg-white rounded-xl shadow-lg p-4 h-[42vh] flex flex-col">
+        <div className="bg-white rounded-xl shadow-lg p-4 h-[calc(100vh-35rem)] flex flex-col">
           <h3 className="text-lg font-semibold mb-2">Favoritos</h3>
           <div className="flex-1 overflow-y-auto">
             <Favorites 
@@ -107,8 +107,8 @@ function Home() {
         </div>
       </div>
 
-      {/* Versión móvil/tablet */}
-      <div className="lg:hidden mt-4">
+      {/* Versión móvil/tablet - Sin cambios */}
+      <div className="lg:hidden p-4 sm:p-6">
         <div className="bg-white rounded-xl shadow-lg p-4">
           <div className="flex border-b mb-3">
             <button

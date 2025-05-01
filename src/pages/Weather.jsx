@@ -110,6 +110,21 @@ function Weather({
                 className="w-full p-1.5 sm:p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 text-xs sm:text-sm"
               />
               {/* Sugerencias mantienen mismo estilo */}
+              {suggestions.length > 0 && (
+                <ul className="absolute z-10 w-full bg-white border border-gray-300 rounded-md mt-1 max-h-40 overflow-y-auto">
+                  {suggestions.map((suggestion, index) => (
+                    <li
+                      key={`${suggestion.name}-${suggestion.country}`}
+                      className={`p-2 cursor-pointer hover:bg-gray-100 ${
+                        index === selectedSuggestionIndex ? "bg-blue-50" : ""
+                      }`}
+                      onClick={() => onCitySelect(suggestion)}
+                    >
+                      {`${suggestion.name}, ${suggestion.region} - ${suggestion.country}`}
+                    </li>
+                  ))}
+                </ul>
+              )}
             </div>
             <button
               type="submit"

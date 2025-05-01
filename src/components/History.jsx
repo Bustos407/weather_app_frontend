@@ -3,7 +3,7 @@ import "../Favorites.css";
 function History({ history, onHistoryClick }) {
   return (
     <ul className="grid grid-cols-1 md:grid-cols-2 gap-2">
-      {history.slice(0, 12).map((cityData, index) => {
+      {history.slice(0, 30).map((cityData, index) => {
         const [name, country] =
           typeof cityData === "string"
             ? cityData.split(",").map((s) => s.trim())
