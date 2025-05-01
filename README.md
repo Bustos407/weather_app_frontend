@@ -63,7 +63,7 @@ Aplicación web full-stack para consulta del clima con funcionalidades avanzadas
 ```bash
 git clone https://github.com/Bustos407/weather_app_frontend.git
 cd weatherapp
-2. Installar dependencias
+#Installar dependencias
 npm install
 
 # API Principal
