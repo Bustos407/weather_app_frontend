@@ -50,73 +50,94 @@ function WeatherTable({ cities }) {
   return (
     <div className="flex flex-col h-[calc(100vh-6rem)] w-full">
       <div className="flex-1 overflow-x-auto">
-        <table className="w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="w-[30%] px-4 py-3 text-left text-sm font-medium text-gray-500 uppercase">
-                Ciudad
-              </th>
-              <th className="w-[20%] hidden sm:table-cell px-4 py-3 text-left text-sm font-medium text-gray-500 uppercase">
-                Temp (°C/°F)
-              </th>
-              <th className="w-[15%] hidden md:table-cell px-4 py-3 text-left text-sm font-medium text-gray-500 uppercase">
-                Humedad
-              </th>
-              <th className="w-[20%] px-4 py-3 text-left text-sm font-medium text-gray-500 uppercase">
-                Viento
-              </th>
-              <th className="w-[15%] hidden lg:table-cell px-4 py-3 text-left text-sm font-medium text-gray-500 uppercase">
-                Hora
-              </th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {currentItems.map((item, index) => {
-              const [city, country] = item.city.split(',').map(s => s.trim());
-              return (
-                <tr 
-                  key={index}
-                  onClick={() => handleRowClick({ name: city, country })}
-                  className="hover:bg-gray-50 cursor-pointer transition-colors"
-                >
-                  <td className="w-[30%] px-4 py-3 text-base text-gray-900 font-medium">
-                    <div className="flex flex-col">
-                      <span className="whitespace-nowrap">{city}</span>
-                      {country && (
-                        <span className="text-sm text-gray-500 whitespace-nowrap">
-                          {country}
+        <div className="min-w-[500px]"> {/* Ancho mínimo para evitar pixelación */}
+          <table className="w-full divide-y divide-gray-200">
+            <thead className="bg-gray-50">
+              <tr>
+                <th className="w-[35%] px-2 sm:px-4 py-2 text-left text-xs sm:text-sm font-medium text-gray-500 uppercase">
+                  Ciudad
+                </th>
+                <th className="w-[25%] px-2 sm:px-4 py-2 text-left text-xs sm:text-sm font-medium text-gray-500 uppercase hidden sm:table-cell">
+                  Temp (°C/°F)
+                </th>
+                <th className="w-[15%] px-2 sm:px-4 py-2 text-left text-xs sm:text-sm font-medium text-gray-500 uppercase hidden md:table-cell">
+                  Humedad
+                </th>
+                <th className="w-[25%] px-2 sm:px-4 py-2 text-left text-xs sm:text-sm font-medium text-gray-500 uppercase">
+                  Viento
+                </th>
+                <th className="w-[15%] px-2 sm:px-4 py-2 text-left text-xs sm:text-sm font-medium text-gray-500 uppercase hidden lg:table-cell">
+                  Hora
+                </th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {currentItems.map((item, index) => {
+                const [city, country] = item.city.split(',').map(s => s.trim());
+                return (
+                  <tr 
+                    key={index}
+                    onClick={() => handleRowClick({ name: city, country })}
+                    className="hover:bg-gray-50 cursor-pointer transition-colors"
+                  >
+                    <td className="w-[35%] px-2 sm:px-4 py-1.5 sm:py-3 text-sm sm:text-base text-gray-900">
+                      <div className="flex flex-col">
+                        <span className="truncate">{city}</span>
+                        {country && (
+                          <span className="text-xs sm:text-sm text-gray-500 truncate">
+                            {country}
+                          </span>
+                        )}
+                      </div>
+                    </td>
+                    <td className="w-[25%] px-2 sm:px-4 py-1.5 sm:py-3 text-sm sm:text-base text-gray-900 hidden sm:table-cell">
+                      {item.temperature?.celsius}°C / {item.temperature?.fahrenheit}°F
+                    </td>
+                    <td className="w-[15%] px-2 sm:px-4 py-1.5 sm:py-3 text-sm sm:text-base text-gray-900 hidden md:table-cell">
+                      {item.humidity}%
+                    </td>
+                    <td className="w-[25%] px-2 sm:px-4 py-1.5 sm:py-3 text-sm sm:text-base text-gray-900">
+                      <div className="flex items-center gap-1">
+                        <span>{item.windSpeed} km/h</span>
+                        <span className="hidden xs:inline text-xs text-gray-500">
+                          {item.windDirection}
                         </span>
-                      )}
-                    </div>
-                  </td>
-                  <td className="w-[20%] hidden sm:table-cell px-4 py-3 text-base text-gray-900 whitespace-nowrap">
-                    {item.temperature?.celsius}°C / {item.temperature?.fahrenheit}°F
-                  </td>
-                  <td className="w-[15%] hidden md:table-cell px-4 py-3 text-base text-gray-900">
-                    {item.humidity}%
-                  </td>
-                  <td className="w-[20%] px-4 py-3 text-base text-gray-900 whitespace-nowrap">
-                    <div className="flex items-center gap-1">
-                      <span>{item.windSpeed} km/h</span>
-                      <span className="hidden sm:inline text-sm text-gray-500">
-                        {item.windDirection}
-                      </span>
-                    </div>
-                  </td>
-                  <td className="w-[15%] hidden lg:table-cell px-4 py-3 text-base text-gray-900 whitespace-nowrap">
-                    {new Date(item.localTime).toLocaleTimeString([], {
-                      hour: '2-digit',
-                      minute: '2-digit'
-                    })}
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+                      </div>
+                    </td>
+                    <td className="w-[15%] px-2 sm:px-4 py-1.5 sm:py-3 text-sm sm:text-base text-gray-900 hidden lg:table-cell">
+                      {new Date(item.localTime).toLocaleTimeString([], {
+                        hour: '2-digit',
+                        minute: '2-digit'
+                      })}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
       </div>
 
-      {/* Paginación (mismo código anterior) */}
+      {/* Paginación */}
+      {totalPages > 1 && (
+        <div className="mt-4 pb-4 px-2 sm:px-0">
+          <div className="flex justify-center gap-1 sm:gap-2">
+            {Array.from({ length: totalPages }, (_, i) => (
+              <button
+                key={i + 1}
+                onClick={() => setCurrentPage(i + 1)}
+                className={`min-w-[1.75rem] px-2 py-1 sm:px-3 sm:py-2 rounded-md text-xs sm:text-sm transition-colors ${
+                  currentPage === i + 1 
+                    ? 'bg-blue-500 text-white' 
+                    : 'bg-white border border-gray-300 hover:bg-gray-100'
+                }`}
+              >
+                {i + 1}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

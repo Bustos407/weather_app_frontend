@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import useWeather from "../hooks/useWeather";
 import History from "../components/History";
 import Weather from "./Weather";
@@ -16,6 +16,7 @@ function Home() {
   const [mobileTab, setMobileTab] = useState('history');
   const weather = useWeather();
   const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchFavorites();
@@ -60,35 +61,58 @@ function Home() {
     }
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("userId");
+    navigate("/");
+  };
+
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col lg:flex-row">
-      {/* Contenido principal con padding superior */}
-      <div className="flex-1 min-w-0 pt-24"> {/* Added pt-24 */}
+      {/* Contenido principal */}
+      <div className="flex-1 min-w-0 pt-16 lg:pt-24 lg:pr-4 relative">
+      
+      
         <Weather 
           {...weather}
           favorites={favorites}
           onCitySelect={handleCityAction}
           onFavoriteUpdate={fetchFavorites}
         />
+
+        
       </div>
 
-      {/* Panel lateral desktop con margen superior y ajuste de altura */}
-      <div className="hidden lg:flex flex-col gap-4 w-80 mt-24 flex-shrink-0 pr-4"> {/* Added mt-24 and pr-4 */}
-        <div className="bg-white rounded-xl shadow-lg p-4 h-[calc(100vh-35rem)] flex flex-col">
-          <h3 className="text-lg font-semibold mb-2">Historial</h3>
+      
+
+      {/* Panel lateral desktop */}
+      <div className="hidden lg:flex flex-col gap-4 w-80 mt-24 flex-shrink-0 pr-4">
+        <div className="bg-white rounded-xl shadow-lg p-4 h-[calc(100vh-40rem)] flex flex-col">
+          <div className="flex justify-between items-center mb-3">
+            <h3 className="text-lg font-semibold">Historial</h3>
+            <Link 
+              to="/table/history"
+              className="text-blue-500 text-sm hover:underline"
+            >
+              Ver completo →
+            </Link>
+          </div>
           <div className="flex-1 overflow-y-auto">
             <History history={history} onHistoryClick={handleCityAction} />
           </div>
-          <Link 
-            to="/table/history"
-            className="mt-2 text-blue-500 text-sm hover:underline"
-          >
-            Ver tabla completa →
-          </Link>
         </div>
+        
 
-        <div className="bg-white rounded-xl shadow-lg p-4 h-[calc(100vh-35rem)] flex flex-col">
-          <h3 className="text-lg font-semibold mb-2">Favoritos</h3>
+        <div className="bg-white rounded-xl shadow-lg p-4 h-[calc(100vh-40rem)] flex flex-col">
+          <div className="flex justify-between items-center mb-3">
+            <h3 className="text-lg font-semibold">Favoritos</h3>
+            <Link 
+              to="/table/favorites"
+              className="text-blue-500 text-sm hover:underline"
+            >
+              Ver completo →
+            </Link>
+          </div>
           <div className="flex-1 overflow-y-auto">
             <Favorites 
               favorites={favorites} 
@@ -98,22 +122,16 @@ function Home() {
               onUpdate={fetchFavorites}
             />
           </div>
-          <Link 
-            to="/table/favorites"
-            className="mt-2 text-blue-500 text-sm hover:underline"
-          >
-            Ver tabla completa →
-          </Link>
         </div>
       </div>
 
-      {/* Versión móvil/tablet - Sin cambios */}
+      {/* Versión móvil/tablet */}
       <div className="lg:hidden p-4 sm:p-6">
         <div className="bg-white rounded-xl shadow-lg p-4">
           <div className="flex border-b mb-3">
             <button
               onClick={() => setMobileTab('history')}
-              className={`px-4 py-2 font-medium ${
+              className={`flex-1 px-4 py-2 font-medium ${
                 mobileTab === 'history'
                   ? 'border-b-2 border-blue-500 text-blue-600'
                   : 'text-gray-500 hover:text-gray-700'
@@ -123,7 +141,7 @@ function Home() {
             </button>
             <button
               onClick={() => setMobileTab('favorites')}
-              className={`px-4 py-2 font-medium ${
+              className={`flex-1 px-4 py-2 font-medium ${
                 mobileTab === 'favorites'
                   ? 'border-b-2 border-blue-500 text-blue-600'
                   : 'text-gray-500 hover:text-gray-700'
@@ -137,12 +155,14 @@ function Home() {
             {mobileTab === 'history' ? (
               <>
                 <History history={history} onHistoryClick={handleCityAction} />
-                <Link 
-                  to="/table/history"
-                  className="mt-2 text-blue-500 text-sm hover:underline block"
-                >
-                  Ver historial completo →
-                </Link>
+                <div className="mt-3 text-center">
+                  <Link 
+                    to="/table/history"
+                    className="text-blue-500 text-sm hover:underline"
+                  >
+                    Ver historial completo →
+                  </Link>
+                </div>
               </>
             ) : (
               <>
@@ -153,12 +173,14 @@ function Home() {
                   onSelectCity={handleCityAction}
                   onUpdate={fetchFavorites}
                 />
-                <Link 
-                  to="/table/favorites"
-                  className="mt-2 text-blue-500 text-sm hover:underline block"
-                >
-                  Ver favoritos completos →
-                </Link>
+                <div className="mt-3 text-center">
+                  <Link 
+                    to="/table/favorites"
+                    className="text-blue-500 text-sm hover:underline"
+                  >
+                    Ver favoritos completos →
+                  </Link>
+                </div>
               </>
             )}
           </div>

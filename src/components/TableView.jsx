@@ -1,13 +1,23 @@
 import { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom'; // Corregido: añadir useNavigate
 import api from '../api/api';
 import WeatherTable from './WeatherTable';
 
 function TableView() {
   const { type } = useParams();
+  const navigate = useNavigate(); // Añadido el hook
   const [cities, setCities] = useState([]);
+  const [weatherData, setWeatherData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.matchMedia('(max-width: 640px)').matches);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -22,7 +32,18 @@ function TableView() {
           });
           data = response.data.map(fav => fav.city);
         }
-        setCities(data.filter(c => typeof c === 'string'));
+        
+        const validCities = data.filter(c => typeof c === 'string');
+        setCities(validCities);
+
+        if (validCities.length > 0) {
+          const { data: weather } = await api.post('/weather/bulk', { 
+            cities: validCities,
+            _: Date.now()
+          });
+          setWeatherData(weather);
+        }
+        
         setLoading(false);
       } catch (err) {
         console.error(err);
@@ -51,9 +72,44 @@ function TableView() {
         </h2>
       </div>
       
-      <div className="flex-1 bg-white rounded-xl shadow-lg overflow-hidden">
-        <WeatherTable cities={cities} />
-      </div>
+      {isMobile ? (
+        <div className="grid gap-3">
+          {weatherData.map((item, index) => {
+            const [city, country] = item.city.split(',').map(s => s.trim());
+            return (
+              <div 
+                key={index}
+                className="bg-white p-4 rounded-xl shadow-md cursor-pointer hover:bg-gray-50 transition-colors"
+                onClick={() => {
+                  navigate('/home', { 
+                    state: { selectedCity: { name: city, country } },
+                    replace: true
+                  });
+                  window.scrollTo(0, 0);
+                }}
+              >
+                <div className="flex justify-between items-start">
+                  <div>
+                    <h3 className="font-bold text-lg">{city}</h3>
+                    {country && <p className="text-gray-500 text-sm">{country}</p>}
+                  </div>
+                  <span className="text-xl">
+                    {item.temperature?.celsius}°C
+                  </span>
+                </div>
+                <div className="mt-2 grid grid-cols-2 gap-2 text-sm">
+                  <div>Humedad: {item.humidity}%</div>
+                  <div>Viento: {item.windSpeed} km/h</div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      ) : (
+        <div className="flex-1 bg-white rounded-xl shadow-lg overflow-hidden">
+          <WeatherTable cities={cities} />
+        </div>
+      )}
     </div>
   );
 }

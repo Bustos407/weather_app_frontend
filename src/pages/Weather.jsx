@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import api from "../api/api";
 import WeatherTable from "../components/WeatherTable";
 import DetailItem from "../components/DetailItem";
@@ -18,6 +18,7 @@ function Weather({
   favorites,
 }) {
   const location = useLocation();
+  const navigate = useNavigate();
   const [isFavorite, setIsFavorite] = useState(false);
   const token = localStorage.getItem("token");
   const userId = localStorage.getItem("userId");
@@ -94,48 +95,86 @@ function Weather({
     }
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("userId");
+    navigate("/");
+  };
+
   return (
     <div className="min-h-screen bg-gray-100 relative">
-      {/* Barra de búsqueda ajustada para horizontal */}
+      {/* Barra superior con botón de cerrar sesión y búsqueda */}
       <div className="bg-white p-3 sm:p-4 shadow-md fixed w-full top-0 left-0 z-30 h-20 sm:h-24">
-        <form onSubmit={handleSearch} className="relative">
-          <div className="flex flex-col sm:flex-row gap-1 sm:gap-2">
-            <div className="flex-1 relative">
-              <input
-                type="text"
-                value={city}
-                onChange={handleCityChange}
-                onKeyDown={handleKeyPress}
-                placeholder="Ingrese ciudad"
-                className="w-full p-1.5 sm:p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 text-xs sm:text-sm"
-              />
-              {/* Sugerencias mantienen mismo estilo */}
-              {suggestions.length > 0 && (
-                <ul className="absolute z-10 w-full bg-white border border-gray-300 rounded-md mt-1 max-h-40 overflow-y-auto">
-                  {suggestions.map((suggestion, index) => (
-                    <li
-                      key={`${suggestion.name}-${suggestion.country}`}
-                      className={`p-2 cursor-pointer hover:bg-gray-100 ${
-                        index === selectedSuggestionIndex ? "bg-blue-50" : ""
-                      }`}
-                      onClick={() => onCitySelect(suggestion)}
-                    >
-                      {`${suggestion.name}, ${suggestion.region} - ${suggestion.country}`}
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </div>
-            <button
-              type="submit"
-              className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1.5 sm:px-4 sm:py-2 rounded-md transition duration-300 whitespace-nowrap text-xs sm:text-sm w-full sm:w-auto"
+        <div className="flex items-center justify-between gap-2 sm:gap-4">
+          {/* Botón de cerrar sesión */}
+          <button
+            onClick={handleLogout}
+            className="bg-red-500 hover:bg-red-600 text-white p-2 sm:px-3 sm:py-2 rounded-lg 
+                      flex items-center gap-1 transition-colors duration-200 text-xs sm:text-sm
+                      flex-shrink-0"
+          >
+            <svg 
+              xmlns="http://www.w3.org/2000/svg" 
+              className="h-4 w-4 sm:h-5 sm:w-5" 
+              fill="none" 
+              viewBox="0 0 24 24" 
+              stroke="currentColor"
             >
-              Buscar
-            </button>
-          </div>
-        </form>
+              <path 
+                strokeLinecap="round" 
+                strokeLinejoin="round" 
+                strokeWidth={2} 
+                d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" 
+              />
+            </svg>
+            <span className="hidden sm:inline">Cerrar Sesión</span>
+          </button>
+
+          {/* Formulario de búsqueda */}
+          <form onSubmit={handleSearch} className="flex-1">
+            <div className="flex flex-col sm:flex-row gap-1 sm:gap-2">
+              <div className="flex-1 relative">
+                <input
+                  type="text"
+                  value={city}
+                  onChange={handleCityChange}
+                  onKeyDown={handleKeyPress}
+                  placeholder="Ingrese ciudad"
+                  className="w-full p-1.5 sm:p-2 border border-gray-300 rounded-md 
+                            focus:outline-none focus:ring-2 focus:ring-blue-400 text-xs sm:text-sm"
+                />
+                
+                {/* Sugerencias */}
+                {suggestions.length > 0 && (
+                  <ul className="absolute z-10 w-full bg-white border border-gray-300 rounded-md mt-1 max-h-40 overflow-y-auto">
+                    {suggestions.map((suggestion, index) => (
+                      <li
+                        key={`${suggestion.name}-${suggestion.country}`}
+                        className={`p-2 cursor-pointer hover:bg-gray-100 ${
+                          index === selectedSuggestionIndex ? "bg-blue-50" : ""
+                        } text-xs sm:text-sm`}
+                        onClick={() => onCitySelect(suggestion)}
+                      >
+                        {`${suggestion.name}, ${suggestion.region} - ${suggestion.country}`}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+              <button
+                type="submit"
+                className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1.5 sm:px-4 sm:py-2 
+                          rounded-md transition duration-300 whitespace-nowrap text-xs sm:text-sm 
+                          w-full sm:w-auto"
+              >
+                Buscar
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
 
+      {/* Contenido principal */}
       {!isTableView && (
         <div className="px-2 sm:px-3 flex justify-center pt-20 sm:pt-24">
           <div className="max-w-4xl w-full">
@@ -147,15 +186,11 @@ function Weather({
 
             {weatherData && (
               <div className="mt-2 sm:mt-4 bg-white p-3 sm:p-4 rounded-lg shadow-md mx-1 sm:mx-0">
-                {/* Encabezado compacto */}
                 <div className="flex justify-between items-center mb-4 sm:mb-6">
                   <div className="max-w-[calc(100%-60px)]">
-                    {" "}
-                    {/* Añadir max-width */}
                     <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-800 truncate">
                       {weatherData.city}
                     </h1>
-                    {/* Fecha */}
                   </div>
                   <button
                     onClick={handleFavoriteClick}
@@ -165,7 +200,6 @@ function Weather({
                   </button>
                 </div>
 
-                {/* Contenido principal ajustado */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-2 sm:gap-3">
                   <div className="md:col-span-2">
                     <div className="flex flex-col sm:flex-row items-center mb-2 sm:mb-3">

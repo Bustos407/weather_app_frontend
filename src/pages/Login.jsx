@@ -14,16 +14,19 @@ function Login() {
     e.preventDefault();
     setError(null);
     setSuccess(null);
-
+  
     try {
       const endpoint = isRegister ? "/auth/register" : "/auth/login";
-      const response = await api.post(endpoint, { username, password });
-
+      const { data } = await api.post(endpoint, { username, password });
+  
       if (!isRegister) {
-        const { token, userId } = response.data;
-        localStorage.setItem("token", token);
-        localStorage.setItem("userId", userId);
-        navigate("/home");
+        if (data.token && data.userId) { // ✅ Verificar datos importantes
+          localStorage.setItem("token", data.token);
+          localStorage.setItem("userId", data.userId);
+          navigate("/home");
+        } else {
+          throw new Error("Respuesta inválida del servidor");
+        }
       } else {
         setIsRegister(false);
         setUsername('');
@@ -31,10 +34,18 @@ function Login() {
         setSuccess("Registro exitoso. Ahora puedes iniciar sesión.");
       }
     } catch (error) {
-      setError(error.response?.data?.error || "Ocurrió un error");
+      const errorMessage = error.response?.data?.error 
+        || error.message 
+        || "Error de conexión";
+        
+      setError(errorMessage);
+      
+      // Limpiar credenciales inválidas
+      localStorage.removeItem("token");
+      localStorage.removeItem("userId");
     }
   };
-
+  
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100">
       <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-sm">
