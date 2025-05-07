@@ -13,7 +13,7 @@ function Home() {
   const [favorites, setFavorites] = useState([]);
   const [favoritesLoading, setFavoritesLoading] = useState(true);
   const [favoritesError, setFavoritesError] = useState('');
-  const [mobileTab, setMobileTab] = useState('history');
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const weather = useWeather();
   const location = useLocation();
   const navigate = useNavigate();
@@ -69,25 +69,68 @@ function Home() {
 
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col lg:flex-row">
+      {/* Botón del menú hamburguesa */}
+      <button 
+        onClick={() => setIsSidebarOpen(true)}
+        className="fixed top-4 left-4 z-50 lg:hidden p-2 bg-white rounded-lg shadow-md"
+      >
+        ☰
+      </button>
+
+      {/* Fondo oscuro */}
+      {isSidebarOpen && (
+        <div 
+          className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+          onClick={() => setIsSidebarOpen(false)}
+        />
+      )}
+
+      {/* Barra lateral móvil */}
+      <div className={`fixed inset-y-0 left-0 w-64 bg-white shadow-xl transform transition-transform duration-300 ease-in-out z-50 ${
+        isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
+      } lg:hidden`}>
+        <div className="p-6 flex flex-col gap-4">
+          <Link
+            to="/table/history"
+            onClick={() => setIsSidebarOpen(false)}
+            className="text-lg p-3 hover:bg-blue-50 rounded-xl transition-colors flex items-center gap-2"
+          >
+            <span className="text-xl">📜</span>
+            Historial
+          </Link>
+          
+          <Link
+            to="/table/favorites"
+            onClick={() => setIsSidebarOpen(false)}
+            className="text-lg p-3 hover:bg-blue-50 rounded-xl transition-colors flex items-center gap-2"
+          >
+            <span className="text-xl">⭐</span>
+            Favoritos
+          </Link>
+          
+          <button
+            onClick={handleLogout}
+            className="text-lg p-3 hover:bg-red-50 text-red-600 rounded-xl transition-colors mt-4 flex items-center gap-2"
+          >
+            <span className="text-xl">🚪</span>
+            Cerrar sesión
+          </button>
+        </div>
+      </div>
+
       {/* Contenido principal */}
       <div className="flex-1 min-w-0 pt-16 lg:pt-24 lg:pr-4 relative">
-      
-      
         <Weather 
           {...weather}
           favorites={favorites}
           onCitySelect={handleCityAction}
           onFavoriteUpdate={fetchFavorites}
         />
-
-        
       </div>
-
-      
 
       {/* Panel lateral desktop */}
       <div className="hidden lg:flex flex-col gap-4 w-80 mt-24 flex-shrink-0 pr-4">
-        <div className="bg-white rounded-xl shadow-lg p-4 h-[calc(100vh-40rem)] flex flex-col">
+        <div className="bg-white rounded-xl shadow-lg p-4 h-80 flex flex-col">
           <div className="flex justify-between items-center mb-3">
             <h3 className="text-lg font-semibold">Historial</h3>
             <Link 
@@ -101,9 +144,8 @@ function Home() {
             <History history={history} onHistoryClick={handleCityAction} />
           </div>
         </div>
-        
 
-        <div className="bg-white rounded-xl shadow-lg p-4 h-[calc(100vh-40rem)] flex flex-col">
+        <div className="bg-white rounded-xl shadow-lg p-4 h-80 flex flex-col">
           <div className="flex justify-between items-center mb-3">
             <h3 className="text-lg font-semibold">Favoritos</h3>
             <Link 
@@ -121,68 +163,6 @@ function Home() {
               onSelectCity={handleCityAction}
               onUpdate={fetchFavorites}
             />
-          </div>
-        </div>
-      </div>
-
-      {/* Versión móvil/tablet */}
-      <div className="lg:hidden p-4 sm:p-6">
-        <div className="bg-white rounded-xl shadow-lg p-4">
-          <div className="flex border-b mb-3">
-            <button
-              onClick={() => setMobileTab('history')}
-              className={`flex-1 px-4 py-2 font-medium ${
-                mobileTab === 'history'
-                  ? 'border-b-2 border-blue-500 text-blue-600'
-                  : 'text-gray-500 hover:text-gray-700'
-              }`}
-            >
-              Historial
-            </button>
-            <button
-              onClick={() => setMobileTab('favorites')}
-              className={`flex-1 px-4 py-2 font-medium ${
-                mobileTab === 'favorites'
-                  ? 'border-b-2 border-blue-500 text-blue-600'
-                  : 'text-gray-500 hover:text-gray-700'
-              }`}
-            >
-              Favoritos
-            </button>
-          </div>
-
-          <div className="h-[40vh] overflow-y-auto">
-            {mobileTab === 'history' ? (
-              <>
-                <History history={history} onHistoryClick={handleCityAction} />
-                <div className="mt-3 text-center">
-                  <Link 
-                    to="/table/history"
-                    className="text-blue-500 text-sm hover:underline"
-                  >
-                    Ver historial completo →
-                  </Link>
-                </div>
-              </>
-            ) : (
-              <>
-                <Favorites 
-                  favorites={favorites} 
-                  loading={favoritesLoading}
-                  error={favoritesError}
-                  onSelectCity={handleCityAction}
-                  onUpdate={fetchFavorites}
-                />
-                <div className="mt-3 text-center">
-                  <Link 
-                    to="/table/favorites"
-                    className="text-blue-500 text-sm hover:underline"
-                  >
-                    Ver favoritos completos →
-                  </Link>
-                </div>
-              </>
-            )}
           </div>
         </div>
       </div>

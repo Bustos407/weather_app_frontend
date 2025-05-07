@@ -109,22 +109,22 @@ function Weather({
           {/* Botón de cerrar sesión */}
           <button
             onClick={handleLogout}
-            className="bg-red-500 hover:bg-red-600 text-white p-2 sm:px-3 sm:py-2 rounded-lg 
-                      flex items-center gap-1 transition-colors duration-200 text-xs sm:text-sm
-                      flex-shrink-0"
+            className="hidden lg:flex bg-red-500 hover:bg-red-600 text-white p-2 sm:px-3 sm:py-2 rounded-lg 
+            flex items-center gap-1 transition-colors duration-200 text-xs sm:text-sm
+            flex-shrink-0"
           >
-            <svg 
-              xmlns="http://www.w3.org/2000/svg" 
-              className="h-4 w-4 sm:h-5 sm:w-5" 
-              fill="none" 
-              viewBox="0 0 24 24" 
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-4 w-4 sm:h-5 sm:w-5"
+              fill="none"
+              viewBox="0 0 24 24"
               stroke="currentColor"
             >
-              <path 
-                strokeLinecap="round" 
-                strokeLinejoin="round" 
-                strokeWidth={2} 
-                d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" 
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
               />
             </svg>
             <span className="hidden sm:inline">Cerrar Sesión</span>
@@ -143,7 +143,7 @@ function Weather({
                   className="w-full p-1.5 sm:p-2 border border-gray-300 rounded-md 
                             focus:outline-none focus:ring-2 focus:ring-blue-400 text-xs sm:text-sm"
                 />
-                
+
                 {/* Sugerencias */}
                 {suggestions.length > 0 && (
                   <ul className="absolute z-10 w-full bg-white border border-gray-300 rounded-md mt-1 max-h-40 overflow-y-auto">

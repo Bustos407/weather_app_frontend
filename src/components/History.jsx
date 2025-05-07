@@ -1,9 +1,26 @@
 import "../Favorites.css";
 
 function History({ history, onHistoryClick }) {
+  // Filtrar el historial para eliminar duplicados
+  const filteredHistory = history
+    .map((cityData) => {
+      const [name, country] =
+        typeof cityData === "string"
+          ? cityData.split(",").map((s) => s.trim())
+          : [cityData.name, cityData.country];
+      return { name: name.toLowerCase(), country: country?.toLowerCase() };
+    })
+    .filter(
+      (value, index, self) =>
+        index ===
+        self.findIndex(
+          (t) => t.name === value.name && t.country === value.country
+        )
+    );
+
   return (
     <ul className="grid grid-cols-1 md:grid-cols-2 gap-2">
-      {history.slice(0, 30).map((cityData, index) => {
+      {filteredHistory.slice(0, 30).map((cityData, index) => {
         const [name, country] =
           typeof cityData === "string"
             ? cityData.split(",").map((s) => s.trim())
