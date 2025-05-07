@@ -8,19 +8,21 @@ function Login() {
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
   const [isRegister, setIsRegister] = useState(false);
+  const [loading, setLoading] = useState(false); // Nuevo estado de carga
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
     setSuccess(null);
+    setLoading(true); // Activar estado de carga
   
     try {
       const endpoint = isRegister ? "/auth/register" : "/auth/login";
       const { data } = await api.post(endpoint, { username, password });
   
       if (!isRegister) {
-        if (data.token && data.userId) { // ✅ Verificar datos importantes
+        if (data.token && data.userId) {
           localStorage.setItem("token", data.token);
           localStorage.setItem("userId", data.userId);
           navigate("/home");
@@ -39,10 +41,10 @@ function Login() {
         || "Error de conexión";
         
       setError(errorMessage);
-      
-      // Limpiar credenciales inválidas
       localStorage.removeItem("token");
       localStorage.removeItem("userId");
+    } finally {
+      setLoading(false); // Desactivar estado de carga siempre
     }
   };
   
@@ -52,6 +54,12 @@ function Login() {
         <h2 className="text-2xl font-bold mb-6 text-center">
           {isRegister ? "Registrarse" : "Iniciar sesión"}
         </h2>
+
+        {loading && (
+          <p className="bg-blue-100 text-blue-700 p-2 rounded mb-4 text-center">
+            Esperando mientras se hacen las solicitudes...
+          </p>
+        )}
 
         {error && (
           <p className="bg-red-100 text-red-700 p-2 rounded mb-4 text-center">
@@ -73,7 +81,8 @@ function Login() {
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               required
-              className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+              disabled={loading}
+              className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 disabled:opacity-50"
             />
           </div>
           <div>
@@ -83,26 +92,29 @@ function Login() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+              disabled={loading}
+              className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 disabled:opacity-50"
             />
           </div>
           <button
             type="submit"
-            className="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 rounded-md transition duration-300"
+            disabled={loading}
+            className="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 rounded-md transition duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {isRegister ? "Registrarse" : "Iniciar sesión"}
+            {loading ? "Procesando..." : (isRegister ? "Registrarse" : "Iniciar sesión")}
           </button>
         </form>
 
         <p className="mt-4 text-center text-sm">
           {isRegister ? "¿Ya tienes una cuenta?" : "¿No tienes una cuenta?"}{" "}
           <button
-            className="text-blue-500 hover:underline"
+            className="text-blue-500 hover:underline disabled:opacity-50"
             onClick={() => {
               setIsRegister(!isRegister);
               setError(null);
               setSuccess(null);
             }}
+            disabled={loading}
           >
             {isRegister ? "Inicia sesión" : "Regístrate"}
           </button>
